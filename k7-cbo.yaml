@@ -1,0 +1,4 @@
+config:
+  version:
+    k7-cbo:
+      version: 0.0.1
