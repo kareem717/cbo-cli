@@ -1,7 +1,11 @@
 package cmd
 
 import (
+	"strconv"
+
+	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+	tableui "github.com/kareem717/k7-cbo/cmd/ui/table"
 	"github.com/kareem717/k7-cbo/cmd/ui/textinput"
 	"github.com/kareem717/k7-cbo/internal/entities/company"
 	"github.com/spf13/cobra"
@@ -70,10 +74,40 @@ var createCompanyCmd = &cobra.Command{
 	},
 }
 
+var listCompanyCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all companies.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		companies, err := Service.Company.GetMany(cmd.Context())
+		if err != nil {
+			return err
+		}
+
+		tableRows := make([]table.Row, len(companies))
+		for i, company := range companies {
+			tableRows[i] = table.Row{strconv.Itoa(company.ID), company.Name, company.Description}
+		}
+
+		t := tableui.NewModel(tableRows, []table.Column{
+			{Title: "ID", Width: 10},
+			{Title: "Name", Width: 10},
+			{Title: "Description", Width: 50},
+		}, len(companies))
+
+		// Create and run the Bubble Tea program
+		p := tea.NewProgram(t)
+		if _, err := p.Run(); err != nil {
+			return err
+		}
+
+		return nil
+	},
+}
 func init() {
 	// Add company command to root command
 	rootCmd.AddCommand(companyCmd)
 
 	// Add subcommands
 	companyCmd.AddCommand(createCompanyCmd)
+	companyCmd.AddCommand(listCompanyCmd)
 }
