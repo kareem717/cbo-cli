@@ -17,7 +17,7 @@ type Company struct {
 
 // CompanyMini is a minified version of a Company entity, used for mass indexing/listing.
 type CompanyMini struct {
-	bun.BaseModel `bun:"table:companies"`
+	bun.BaseModel `bun:"table:companies,alias:company"`
 
 	ID   int    `json:"id"`
 	Name string `json:"name"`

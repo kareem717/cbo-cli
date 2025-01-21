@@ -9,6 +9,7 @@ import (
 
 	"github.com/kareem717/k7-cbo/internal/storage"
 	"github.com/kareem717/k7-cbo/internal/storage/sqllite/company"
+	"github.com/kareem717/k7-cbo/internal/storage/sqllite/mom"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pressly/goose/v3"
 	"github.com/uptrace/bun"
@@ -21,7 +22,9 @@ var embedMigrations embed.FS
 
 // DB wraps the sql.DB connection
 type repository struct {
-	db *bun.DB
+	db      *bun.DB
+	company *company.CompanyRepository
+	mom     *mom.MomRepository
 }
 
 type config struct {
@@ -64,11 +67,19 @@ func NewRepository(opts ...configOptFunc) (storage.Repository, error) {
 
 	db := bun.NewDB(sqldb, sqlitedialect.New())
 
-	return &repository{db}, nil
+	return &repository{
+		db,
+		company.NewCompanyRepository(db),
+		mom.NewMomRepository(db),
+	}, nil
 }
 
 func (r *repository) Company() storage.CompanyRepository {
-	return company.NewCompanyRepository(r.db)
+	return r.company
+}
+
+func (r *repository) Mom() storage.MomRepository {
+	return r.mom
 }
 
 const (

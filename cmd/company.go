@@ -17,7 +17,7 @@ type CompanyOptions struct {
 	Description *textinput.Output
 }
 
-var createCmd = &cobra.Command{
+var createCompanyCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a company.",
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -75,5 +75,5 @@ func init() {
 	rootCmd.AddCommand(companyCmd)
 
 	// Add subcommands
-	companyCmd.AddCommand(createCmd)
+	companyCmd.AddCommand(createCompanyCmd)
 }
