@@ -3,16 +3,17 @@ package storage
 import (
 	"context"
 
-	"github.com/kareem717/k7-cbo/internal/entities/lead"
+	"github.com/kareem717/k7-cbo/internal/entities/company"
 )
 
-type LeadRepository interface {
-	Create(ctx context.Context, params lead.CreateLeadParams) error
-	GetMany(ctx context.Context) ([]lead.Lead, error)
+type CompanyRepository interface {
+	Create(ctx context.Context, params company.CreateCompanyParams) error
+	GetMany(ctx context.Context) ([]company.CompanyMini, error)
+	GetByID(ctx context.Context, id int) (company.Company, error)
 }
 
 type Repository interface {
-	Lead() LeadRepository
+	Company() CompanyRepository
 
 	// Migrate applies all pending migrations
 	Migrate(ctx context.Context) error

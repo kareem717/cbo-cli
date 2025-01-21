@@ -31,3 +31,6 @@ go.work.sum
 /bin
 
 .DS_Store
+
+# Database
+k7-cbo.db

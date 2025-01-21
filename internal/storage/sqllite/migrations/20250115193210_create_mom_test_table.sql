@@ -1,9 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE
-    leads (
+    companies (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        linked_in_url TEXT NOT NULL,
+        name VARCHAR(60) NOT NULL,
+        description TEXT NOT NULL,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME
     );
@@ -11,6 +12,6 @@ CREATE TABLE
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE leads;
+DROP TABLE companies;
 
 -- +goose StatementEnd

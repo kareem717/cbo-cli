@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/kareem717/k7-cbo/internal/storage"
-	"github.com/kareem717/k7-cbo/internal/storage/sqllite/lead"
+	"github.com/kareem717/k7-cbo/internal/storage/sqllite/company"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/pressly/goose/v3"
 	"github.com/uptrace/bun"
@@ -54,7 +54,7 @@ func NewRepository(opts ...configOptFunc) (storage.Repository, error) {
 		opt(cfg)
 	}
 
-	sqldb, err := sql.Open(sqliteshim.ShimName, "file::memory:?cache=shared")
+	sqldb, err := sql.Open(sqliteshim.ShimName, "k7-cbo.db")
 	if err != nil {
 		panic(err)
 	}
@@ -67,21 +67,24 @@ func NewRepository(opts ...configOptFunc) (storage.Repository, error) {
 	return &repository{db}, nil
 }
 
-func (r *repository) Lead() storage.LeadRepository {
-	return lead.NewLeadRepository(r.db)
+func (r *repository) Company() storage.CompanyRepository {
+	return company.NewCompanyRepository(r.db)
 }
+
+const (
+	migrationsDir = "migrations"
+)
 
 func (r *repository) Migrate(ctx context.Context) error {
 	goose.SetDialect("sqlite3")
 	goose.SetBaseFS(embedMigrations)
 
-	if err := goose.Up(r.db.DB, "migrations"); err != nil {
+	if err := goose.Up(r.db.DB, migrationsDir); err != nil {
 		return fmt.Errorf("failed to run migrations: %w", err)
 	}
 
 	return nil
 }
-
 func (r *repository) HealthCheck(ctx context.Context) error {
 	return r.db.Ping()
 }

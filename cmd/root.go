@@ -4,12 +4,12 @@ import (
 	"context"
 	"os"
 
-	"github.com/kareem717/k7-cbo/internal/storage"
+	"github.com/kareem717/k7-cbo/internal/service"
 	"github.com/spf13/cobra"
 )
 
-// DB is the package global database instance.
-var DB storage.Repository
+// Service is the package global service instance.
+var Service *service.Service
 
 var rootCmd = &cobra.Command{
 	Use:   "k7-cbo",
@@ -20,12 +20,16 @@ var rootCmd = &cobra.Command{
 	We might provide a hosted version of this tool in the future.`,
 }
 
-func Execute(ctx context.Context, db storage.Repository) {
-	DB = db
+func Execute(ctx context.Context, service *service.Service) {
+	Service = service
 
 	err := rootCmd.ExecuteContext(ctx)
 
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.AddCommand(companyCmd)
 }
